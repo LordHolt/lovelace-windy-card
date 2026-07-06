@@ -88,13 +88,13 @@ const de=e=>(t,o)=>{void 0!==o?o.addInitializer(()=>{customElements.define(e,t)}
           title="${ye(this.hass,"component.windy-card.card.reset_map")??"Reset Map"}"
         >
           <ha-icon icon="mdi:crosshairs-gps"></ha-icon>
-        </button>`:"",c=j`<button
-      class="action-button static-toggle-button ${this._isStatic?"is-active":""}"
-      @click=${this._toggleStatic}
-      title="${this._isStatic?ye(this.hass,"component.windy-card.card.enable_interaction")??"Enable Interaction":ye(this.hass,"component.windy-card.card.disable_interaction")??"Disable Interaction"}"
-    >
-      <ha-icon icon="${this._isStatic?"mdi:lock":"mdi:lock-open-variant"}"></ha-icon>
-    </button>`;return s&&!r?j`
+        </button>`:"",c=i?j`<button
+          class="action-button static-toggle-button ${this._isStatic?"is-active":""}"
+          @click=${this._toggleStatic}
+          title="${this._isStatic?ye(this.hass,"component.windy-card.card.enable_interaction")??"Enable Interaction":ye(this.hass,"component.windy-card.card.disable_interaction")??"Disable Interaction"}"
+        >
+          <ha-icon icon="${this._isStatic?"mdi:lock":"mdi:lock-open-variant"}"></ha-icon>
+        </button>`:"";return s&&!r?j`
         <div
           class="iframe-container ratio-wrapper"
           style="padding-bottom: ${s}; position: relative; width: 100%; height: 0;"

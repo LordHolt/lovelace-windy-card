@@ -448,17 +448,21 @@ export class WindyCard extends LitElement implements LovelaceCard {
         </button>`
       : '';
 
-    const toggleStaticButton = html`<button
-      class="action-button static-toggle-button ${this._isStatic ? 'is-active' : ''}"
-      @click=${this._toggleStatic}
-      title="${
-        this._isStatic
-          ? (localize(this.hass, 'component.windy-card.card.enable_interaction') ?? 'Enable Interaction')
-          : (localize(this.hass, 'component.windy-card.card.disable_interaction') ?? 'Disable Interaction')
-      }"
-    >
-      <ha-icon icon="${this._isStatic ? 'mdi:lock' : 'mdi:lock-open-variant'}"></ha-icon>
-    </button>`;
+    // Only meaningful where the lock actually disables interaction (the map) — showing it
+    // on the forecast panel would suggest it does something there, which it no longer does.
+    const toggleStaticButton = respectStaticLock
+      ? html`<button
+          class="action-button static-toggle-button ${this._isStatic ? 'is-active' : ''}"
+          @click=${this._toggleStatic}
+          title="${
+            this._isStatic
+              ? (localize(this.hass, 'component.windy-card.card.enable_interaction') ?? 'Enable Interaction')
+              : (localize(this.hass, 'component.windy-card.card.disable_interaction') ?? 'Disable Interaction')
+          }"
+        >
+          <ha-icon icon="${this._isStatic ? 'mdi:lock' : 'mdi:lock-open-variant'}"></ha-icon>
+        </button>`
+      : '';
 
     if (ratioPadding && !height) {
       return html`

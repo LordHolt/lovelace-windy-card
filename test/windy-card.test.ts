@@ -567,6 +567,23 @@ describe('WindyCard', () => {
       expect(hasPointerEventsNone).toBe(false);
     });
 
+    it('does not render the interaction lock toggle on the forecast panel', () => {
+      const card = makeCard({ static_map: true });
+      const rendered = (
+        card as unknown as { _renderForecast: () => { strings: TemplateStringsArray; values: unknown[] } }
+      )._renderForecast();
+
+      const toggleButtonTemplate = rendered.values.find(
+        (val) =>
+          val &&
+          typeof val === 'object' &&
+          'strings' in val &&
+          (val as { strings: TemplateStringsArray }).strings.join(' ').includes('static-toggle-button'),
+      );
+
+      expect(toggleButtonTemplate).toBeFalsy();
+    });
+
     it('renders the lock icon based on _isStatic state', () => {
       const card = makeCard({ static_map: true });
       const rendered = (
