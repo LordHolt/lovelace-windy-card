@@ -555,6 +555,18 @@ describe('WindyCard', () => {
       expect(hasPointerEventsNone).toBe(true);
     });
 
+    it('does not apply pointer-events: none to the forecast iframe when _isStatic is true', () => {
+      const card = makeCard({ static_map: true });
+      const rendered = (
+        card as unknown as { _renderForecast: () => { strings: TemplateStringsArray; values: unknown[] } }
+      )._renderForecast();
+
+      const hasPointerEventsNone = rendered.values.some(
+        (val) => typeof val === 'string' && val.includes('pointer-events: none;'),
+      );
+      expect(hasPointerEventsNone).toBe(false);
+    });
+
     it('renders the lock icon based on _isStatic state', () => {
       const card = makeCard({ static_map: true });
       const rendered = (

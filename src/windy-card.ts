@@ -428,11 +428,15 @@ export class WindyCard extends LitElement implements LovelaceCard {
     defaultHeight: number,
     title: string,
     showResetButton: boolean = false,
+    respectStaticLock: boolean = true,
   ) {
     const ratioPadding = this._getRatioPadding();
     const height = this._config.height;
 
-    const pointerEvents = this._isStatic ? 'pointer-events: none;' : '';
+    // The static/lock toggle is meant to stop the map from hijacking page scroll/pan
+    // gestures. It has no equivalent problem in the forecast panel, which should always
+    // stay scrollable, so only the map iframe should ever get pointer-events disabled.
+    const pointerEvents = respectStaticLock && this._isStatic ? 'pointer-events: none;' : '';
 
     const resetButton = showResetButton
       ? html`<button
@@ -447,9 +451,11 @@ export class WindyCard extends LitElement implements LovelaceCard {
     const toggleStaticButton = html`<button
       class="action-button static-toggle-button ${this._isStatic ? 'is-active' : ''}"
       @click=${this._toggleStatic}
-      title="${this._isStatic
-        ? (localize(this.hass, 'component.windy-card.card.enable_interaction') ?? 'Enable Interaction')
-        : (localize(this.hass, 'component.windy-card.card.disable_interaction') ?? 'Disable Interaction')}"
+      title="${
+        this._isStatic
+          ? (localize(this.hass, 'component.windy-card.card.enable_interaction') ?? 'Enable Interaction')
+          : (localize(this.hass, 'component.windy-card.card.disable_interaction') ?? 'Disable Interaction')
+      }"
     >
       <ha-icon icon="${this._isStatic ? 'mdi:lock' : 'mdi:lock-open-variant'}"></ha-icon>
     </button>`;
@@ -576,7 +582,7 @@ export class WindyCard extends LitElement implements LovelaceCard {
   }
 
   private _renderForecast() {
-    return this._renderIframeWithWrapper(this._forecastUrl, 185, 'Windy Forecast', false);
+    return this._renderIframeWithWrapper(this._forecastUrl, 185, 'Windy Forecast', false, false);
   }
 
   static styles = unsafeCSS(cardStyles);

@@ -6,3 +6,5 @@ node_modules
 
 # Lockfiles
 package-lock.json
+
+scripts/windy-embed-snapshot.js
