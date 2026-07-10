@@ -365,8 +365,6 @@ zoom: 6
 
 For issues or feature requests, visit the [GitHub repository](https://github.com/timmaurice/lovelace-windy-card).
 
-[![Star History Chart](https://api.star-history.com/svg?repos=timmaurice/lovelace-windy-card&type=Date)](https://star-history.com/#timmaurice/lovelace-windy-card)
-
 ## ☕ Support My Work
 
 [<img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" height="30" />](https://www.buymeacoffee.com/timmaurice)
