@@ -7,7 +7,9 @@
     "forecast": "天气预报",
     "reset_map": "重置地图",
     "enable_interaction": "启用交互",
-    "disable_interaction": "禁用交互"
+    "disable_interaction": "禁用交互",
+    "fullscreen": "全屏",
+    "exit_fullscreen": "退出全屏"
   },
   "editor": {
     "sections": {
@@ -42,6 +44,7 @@
       "show_spot": "包含单点预报",
       "show_pressure": "等压线",
       "hide_message": "隐藏推广文本",
+      "hide_fullscreen_button": "隐藏全屏按钮",
       "no_padding": "移除边距和边框 (全宽)",
       "static_map": "静态地图 (禁用交互)",
       "autoplay": "自动播放地图动画"

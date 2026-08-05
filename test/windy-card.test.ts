@@ -607,6 +607,140 @@ describe('WindyCard', () => {
     });
   });
 
+  describe('Fullscreen', () => {
+    // Finds the sub-template of a rendered wrapper whose markup contains `needle`
+    const findSubTemplate = (rendered: { values: unknown[] }, needle: string) =>
+      rendered.values.find(
+        (val) =>
+          val &&
+          typeof val === 'object' &&
+          'strings' in val &&
+          (val as { strings: TemplateStringsArray }).strings.join(' ').includes(needle),
+      ) as { values: unknown[] } | undefined;
+
+    const renderMap = (card: WindyCard) =>
+      (card as unknown as { _renderMap: () => { strings: TemplateStringsArray; values: unknown[] } })._renderMap();
+
+    const renderForecast = (card: WindyCard) =>
+      (
+        card as unknown as { _renderForecast: () => { strings: TemplateStringsArray; values: unknown[] } }
+      )._renderForecast();
+
+    const mockEvent = () =>
+      ({ preventDefault: vi.fn(), stopPropagation: vi.fn(), currentTarget: null, target: null }) as unknown as Event;
+
+    it('is not fullscreen initially', () => {
+      const card = makeCard({ overlay: 'wind' });
+      expect((card as unknown as { _isFullscreen: boolean })._isFullscreen).toBe(false);
+    });
+
+    it('renders the fullscreen button on the map panel', () => {
+      const card = makeCard({ overlay: 'wind' });
+      expect(findSubTemplate(renderMap(card), 'fullscreen-button')).toBeTruthy();
+    });
+
+    it('does not render the fullscreen button on the forecast panel', () => {
+      const card = makeCard({ overlay: 'wind' });
+      expect(findSubTemplate(renderForecast(card), 'fullscreen-button')).toBeFalsy();
+    });
+
+    it('omits the fullscreen button when hide_fullscreen_button is set', () => {
+      const card = makeCard({ overlay: 'wind', hide_fullscreen_button: true });
+      expect(findSubTemplate(renderMap(card), 'fullscreen-button')).toBeFalsy();
+    });
+
+    it('toggles _isFullscreen from the button', () => {
+      const card = makeCard({ overlay: 'wind' });
+      const toggle = (card as unknown as { _toggleFullscreen: (ev: Event) => void })._toggleFullscreen.bind(card);
+
+      toggle(mockEvent());
+      expect((card as unknown as { _isFullscreen: boolean })._isFullscreen).toBe(true);
+      toggle(mockEvent());
+      expect((card as unknown as { _isFullscreen: boolean })._isFullscreen).toBe(false);
+    });
+
+    it('swaps the button icon while fullscreen', () => {
+      const card = makeCard({ overlay: 'wind' });
+      expect(findSubTemplate(renderMap(card), 'fullscreen-button')?.values).toContain('mdi:fullscreen');
+
+      (card as unknown as { _isFullscreen: boolean })._isFullscreen = true;
+      expect(findSubTemplate(renderMap(card), 'fullscreen-button')?.values).toContain('mdi:fullscreen-exit');
+    });
+
+    it('pins the map container to the viewport while fullscreen', () => {
+      const card = makeCard({ overlay: 'wind', aspect_ratio: '16:9' });
+      expect(renderMap(card).values.some((v) => typeof v === 'string' && v.includes('position: fixed'))).toBe(false);
+
+      (card as unknown as { _isFullscreen: boolean })._isFullscreen = true;
+      const values = renderMap(card).values;
+      expect(values.some((v) => typeof v === 'string' && v.includes('position: fixed'))).toBe(true);
+      expect(values).toContain('fullscreen');
+    });
+
+    it('leaves the forecast panel untouched while fullscreen', () => {
+      const card = makeCard({ overlay: 'wind' });
+      (card as unknown as { _isFullscreen: boolean })._isFullscreen = true;
+      expect(renderForecast(card).values.some((v) => typeof v === 'string' && v.includes('position: fixed'))).toBe(
+        false,
+      );
+    });
+
+    it('exits fullscreen on Escape', () => {
+      const card = makeCard({ overlay: 'wind' });
+      const keyDown = (card as unknown as { _handleFullscreenKeyDown: (ev: KeyboardEvent) => void })
+        ._handleFullscreenKeyDown;
+
+      (card as unknown as { _isFullscreen: boolean })._isFullscreen = true;
+      keyDown({ key: 'Escape' } as KeyboardEvent);
+      expect((card as unknown as { _isFullscreen: boolean })._isFullscreen).toBe(false);
+    });
+
+    it('ignores other keys while fullscreen', () => {
+      const card = makeCard({ overlay: 'wind' });
+      const keyDown = (card as unknown as { _handleFullscreenKeyDown: (ev: KeyboardEvent) => void })
+        ._handleFullscreenKeyDown;
+
+      (card as unknown as { _isFullscreen: boolean })._isFullscreen = true;
+      keyDown({ key: 'Enter' } as KeyboardEvent);
+      expect((card as unknown as { _isFullscreen: boolean })._isFullscreen).toBe(true);
+    });
+
+    it('toggles fullscreen on double click', () => {
+      const card = makeCard({ overlay: 'wind' });
+      const dblClick = (card as unknown as { _handleContainerDblClick: (ev: Event) => void })._handleContainerDblClick;
+
+      dblClick.call(card, mockEvent());
+      expect((card as unknown as { _isFullscreen: boolean })._isFullscreen).toBe(true);
+      dblClick.call(card, mockEvent());
+      expect((card as unknown as { _isFullscreen: boolean })._isFullscreen).toBe(false);
+    });
+
+    it('does not toggle on double click when the fullscreen button is hidden', () => {
+      const card = makeCard({ overlay: 'wind', hide_fullscreen_button: true });
+      const dblClick = (card as unknown as { _handleContainerDblClick: (ev: Event) => void })._handleContainerDblClick;
+
+      dblClick.call(card, mockEvent());
+      expect((card as unknown as { _isFullscreen: boolean })._isFullscreen).toBe(false);
+    });
+
+    it('ignores double clicks that land on a toolbar button', () => {
+      const card = makeCard({ overlay: 'wind' });
+      const dblClick = (card as unknown as { _handleContainerDblClick: (ev: Event) => void })._handleContainerDblClick;
+      const button = document.createElement('button');
+      button.className = 'action-button reset-button';
+
+      dblClick.call(card, { target: button, currentTarget: null } as unknown as Event);
+      expect((card as unknown as { _isFullscreen: boolean })._isFullscreen).toBe(false);
+    });
+
+    it('leaves fullscreen when the card is removed from the DOM', () => {
+      const card = makeCard({ overlay: 'wind' });
+      (card as unknown as { _isFullscreen: boolean })._isFullscreen = true;
+      card.disconnectedCallback();
+      expect((card as unknown as { _isFullscreen: boolean })._isFullscreen).toBe(false);
+    });
+  });
+
   describe('Throttling & Refresh Frequency', () => {
     it('applies URL updates immediately on initial load', () => {
       const card = makeCard({ update_interval: 5, latitude: 48.0, longitude: 11.0 });

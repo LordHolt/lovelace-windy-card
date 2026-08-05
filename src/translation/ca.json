@@ -7,7 +7,9 @@
     "forecast": "Previsió",
     "reset_map": "Restablir el mapa",
     "enable_interaction": "Activar la interacció",
-    "disable_interaction": "Desactivar la interacció"
+    "disable_interaction": "Desactivar la interacció",
+    "fullscreen": "Pantalla completa",
+    "exit_fullscreen": "Sortir de la pantalla completa"
   },
   "editor": {
     "sections": {
@@ -42,6 +44,7 @@
       "show_spot": "Incloure previsió puntual",
       "show_pressure": "Isòbares de pressió",
       "hide_message": "Ocultar text promocional",
+      "hide_fullscreen_button": "Ocultar el botó de pantalla completa",
       "no_padding": "Eliminar el farciment i la vora (amplada completa)",
       "static_map": "Mapa estàtic (desactivar interaccions)",
       "autoplay": "Reproduir automàticament l'animació del mapa"

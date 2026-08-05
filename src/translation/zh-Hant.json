@@ -7,7 +7,9 @@
     "forecast": "天氣預報",
     "reset_map": "重置地圖",
     "enable_interaction": "啟用互動",
-    "disable_interaction": "禁用互動"
+    "disable_interaction": "禁用互動",
+    "fullscreen": "全螢幕",
+    "exit_fullscreen": "結束全螢幕"
   },
   "editor": {
     "sections": {
@@ -42,6 +44,7 @@
       "show_spot": "包含單點預報",
       "show_pressure": "等壓線",
       "hide_message": "隱藏推廣文字",
+      "hide_fullscreen_button": "隱藏全螢幕按鈕",
       "no_padding": "移除邊距和邊框 (全寬)",
       "static_map": "靜態地圖 (禁用互動)",
       "autoplay": "自動播放地圖動畫"

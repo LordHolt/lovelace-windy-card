@@ -7,7 +7,9 @@
     "forecast": "Verwachting",
     "reset_map": "Kaart resetten",
     "enable_interaction": "Interactie inschakelen",
-    "disable_interaction": "Interactie uitschakelen"
+    "disable_interaction": "Interactie uitschakelen",
+    "fullscreen": "Volledig scherm",
+    "exit_fullscreen": "Volledig scherm verlaten"
   },
   "editor": {
     "sections": {
@@ -42,6 +44,7 @@
       "show_spot": "Spotverwachting toevoegen",
       "show_pressure": "Druk isobaren",
       "hide_message": "Promotietekst verbergen",
+      "hide_fullscreen_button": "Knop volledig scherm verbergen",
       "no_padding": "Padding en rand verwijderen (volledige breedte)",
       "static_map": "Statische kaart (interacties uitschakelen)",
       "autoplay": "Kaartanimatie automatisch afspelen"

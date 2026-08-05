@@ -121,14 +121,26 @@ The card is fully configurable through the Lovelace UI editor. Options are organ
 
 ### Display Options
 
-| Name            | Type    | Default | Description                                                                         |
-| --------------- | ------- | ------- | ----------------------------------------------------------------------------------- |
-| `static_map`    | boolean | `false` | Disable map interaction. Adds a high-contrast toggle button to the vertical toolbar |
-| `autoplay`      | boolean | `false` | Automatically play the map animation                                                |
-| `show_marker`   | boolean | `false` | Show a pin at the detail location                                                   |
-| `show_spot`     | boolean | `false` | Show the spot forecast popup                                                        |
-| `show_pressure` | boolean | `false` | Overlay pressure isolines (not available for radar/satellite)                       |
-| `hide_message`  | boolean | `false` | Hide the Windy promotional message                                                  |
+| Name                     | Type    | Default | Description                                                                         |
+| ------------------------ | ------- | ------- | ----------------------------------------------------------------------------------- |
+| `static_map`             | boolean | `false` | Disable map interaction. Adds a high-contrast toggle button to the vertical toolbar |
+| `autoplay`               | boolean | `false` | Automatically play the map animation                                                |
+| `show_marker`            | boolean | `false` | Show a pin at the detail location                                                   |
+| `show_spot`              | boolean | `false` | Show the spot forecast popup                                                        |
+| `show_pressure`          | boolean | `false` | Overlay pressure isolines (not available for radar/satellite)                       |
+| `hide_message`           | boolean | `false` | Hide the Windy promotional message                                                  |
+| `hide_fullscreen_button` | boolean | `false` | Remove the full screen button from the map toolbar (also disables double-tap)       |
+
+### Full Screen
+
+The map toolbar has a full screen button (<kbd>⛶</kbd>) that expands the map to fill the whole screen — handy on wall tablets. Press it again or hit <kbd>Esc</kbd> to go back.
+
+- Where the browser supports the Fullscreen API, the card also requests native full screen so the browser chrome disappears. Where it does not (iOS/iPadOS webviews, the Home Assistant Companion app), the map still expands to cover the viewport.
+- **Double-tap** on the map toggles full screen too, but only while the interaction lock is active (`static_map: true` or the padlock button). An unlocked Windy map handles the gesture itself and never passes it on.
+- The button is available on the map panel only — the spot forecast is a fixed-height widget that gains nothing from being stretched.
+- Set `hide_fullscreen_button: true` to remove the button (and the double-tap gesture) entirely.
+
+On touch devices the toolbar buttons are always visible, since there is no hover state to reveal them.
 
 ### Available Map Layers (`overlay`)
 

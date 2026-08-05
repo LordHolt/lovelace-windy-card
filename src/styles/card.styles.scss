@@ -136,4 +136,28 @@ iframe {
     opacity: 1;
     pointer-events: auto;
   }
+
+  /* Touch devices never get a hover state, so the toolbar would be unreachable there. */
+  @media (hover: none) {
+    .action-button {
+      opacity: 1;
+      pointer-events: auto;
+    }
+  }
+
+  /*
+   * Fullscreen fallback for browsers/webviews without the Fullscreen API (notably iOS).
+   * The geometry (position: fixed, inset) is set inline by the component so it can
+   * override the inline aspect-ratio padding; this only adds the cosmetics.
+   */
+  &.fullscreen {
+    z-index: 9999;
+    border-radius: 0;
+    background: var(--card-background-color, #ffffff);
+
+    .action-buttons {
+      top: calc(13px + env(safe-area-inset-top, 0px));
+      left: calc(13px + env(safe-area-inset-left, 0px));
+    }
+  }
 }

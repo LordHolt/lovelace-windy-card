@@ -7,7 +7,9 @@
     "forecast": "Prévisions",
     "reset_map": "Réinitialiser la carte",
     "enable_interaction": "Activer l'interaction",
-    "disable_interaction": "Désactiver l'interaction"
+    "disable_interaction": "Désactiver l'interaction",
+    "fullscreen": "Plein écran",
+    "exit_fullscreen": "Quitter le plein écran"
   },
   "editor": {
     "sections": {
@@ -42,6 +44,7 @@
       "show_spot": "Inclure les prévisions locales",
       "show_pressure": "Isobares",
       "hide_message": "Masquer le texte promotionnel",
+      "hide_fullscreen_button": "Masquer le bouton plein écran",
       "no_padding": "Supprimer le rembourrage et la bordure (pleine largeur)",
       "static_map": "Carte statique (désactiver les interactions)",
       "autoplay": "Lecture automatique de l'animation"

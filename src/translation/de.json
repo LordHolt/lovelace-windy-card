@@ -7,7 +7,9 @@
     "forecast": "Vorhersage",
     "reset_map": "Karte zurücksetzen",
     "enable_interaction": "Interaktion aktivieren",
-    "disable_interaction": "Interaktion deaktivieren"
+    "disable_interaction": "Interaktion deaktivieren",
+    "fullscreen": "Vollbild",
+    "exit_fullscreen": "Vollbild beenden"
   },
   "editor": {
     "sections": {
@@ -42,6 +44,7 @@
       "show_spot": "Spot-Vorhersage einbeziehen",
       "show_pressure": "Isobaren anzeigen",
       "hide_message": "Werbung ausblenden",
+      "hide_fullscreen_button": "Vollbild-Schaltfläche ausblenden",
       "no_padding": "Padding und Rahmen entfernen (volle Breite)",
       "static_map": "Statische Karte (Interaktionen deaktivieren)",
       "autoplay": "Kartenanimation automatisch abspielen"

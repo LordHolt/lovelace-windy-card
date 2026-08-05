@@ -15,6 +15,7 @@ export class WindyCard extends LitElement implements LovelaceCard {
   @state() private _config!: WindyCardConfig;
   @state() private _mode: ViewMode = 'map';
   @state() private _isStatic: boolean = false;
+  @state() private _isFullscreen: boolean = false;
   @state() private _mapUrl: string = '';
   @state() private _forecastUrl: string = '';
 
@@ -69,6 +70,8 @@ export class WindyCard extends LitElement implements LovelaceCard {
   public connectedCallback(): void {
     super.connectedCallback();
     this._setupLoopTimer();
+    document.addEventListener('fullscreenchange', this._handleFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', this._handleFullscreenChange);
   }
 
   public disconnectedCallback(): void {
@@ -80,6 +83,13 @@ export class WindyCard extends LitElement implements LovelaceCard {
     if (this._loopTimer) {
       clearInterval(this._loopTimer);
       this._loopTimer = undefined;
+    }
+    document.removeEventListener('fullscreenchange', this._handleFullscreenChange);
+    document.removeEventListener('webkitfullscreenchange', this._handleFullscreenChange);
+    window.removeEventListener('keydown', this._handleFullscreenKeyDown);
+    if (this._isFullscreen) {
+      this._isFullscreen = false;
+      this._exitNativeFullscreen();
     }
   }
 
@@ -423,15 +433,101 @@ export class WindyCard extends LitElement implements LovelaceCard {
     this._isStatic = !this._isStatic;
   }
 
+  private get _fullscreenEnabled(): boolean {
+    return !this._config?.hide_fullscreen_button;
+  }
+
+  /** The element the browser currently shows natively fullscreen, if any. */
+  private get _nativeFullscreenElement(): Element | null {
+    const doc = document as Document & { webkitFullscreenElement?: Element | null };
+    return document.fullscreenElement ?? doc.webkitFullscreenElement ?? null;
+  }
+
+  /**
+   * Native fullscreen is a bonus, not the mechanism: it also hides the browser chrome,
+   * but it is unavailable in several webviews (notably iOS) and can be blocked by
+   * permissions policy. The `.fullscreen` CSS overlay covers the viewport on its own,
+   * so a rejected request is not an error.
+   */
+  private _requestNativeFullscreen(el: HTMLElement): void {
+    const target = el as HTMLElement & { webkitRequestFullscreen?: () => Promise<void> | void };
+    const request = target.requestFullscreen ?? target.webkitRequestFullscreen;
+    if (typeof request !== 'function') return;
+    Promise.resolve(request.call(target)).catch(() => undefined);
+  }
+
+  private _exitNativeFullscreen(): void {
+    if (!this._nativeFullscreenElement) return;
+    const doc = document as Document & { webkitExitFullscreen?: () => Promise<void> | void };
+    const exit = document.exitFullscreen ?? doc.webkitExitFullscreen;
+    if (typeof exit !== 'function') return;
+    Promise.resolve(exit.call(document)).catch(() => undefined);
+  }
+
+  /** Keep our state in sync when the browser leaves native fullscreen on its own (Esc, gesture). */
+  private _handleFullscreenChange = (): void => {
+    if (this._isFullscreen && !this._nativeFullscreenElement) {
+      this._exitFullscreen();
+    }
+  };
+
+  /** Escape is handled by the browser in native fullscreen, but not by the CSS overlay fallback. */
+  private _handleFullscreenKeyDown = (ev: KeyboardEvent): void => {
+    if (ev.key === 'Escape' && this._isFullscreen) {
+      this._exitFullscreen();
+    }
+  };
+
+  private _enterFullscreen(container: HTMLElement | null): void {
+    this._isFullscreen = true;
+    window.addEventListener('keydown', this._handleFullscreenKeyDown);
+    if (container) {
+      this._requestNativeFullscreen(container);
+    }
+  }
+
+  private _exitFullscreen(): void {
+    this._isFullscreen = false;
+    window.removeEventListener('keydown', this._handleFullscreenKeyDown);
+    this._exitNativeFullscreen();
+  }
+
+  private _toggleFullscreen(e: Event) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (this._isFullscreen) {
+      this._exitFullscreen();
+      return;
+    }
+    const container = (e.currentTarget as HTMLElement)?.closest('.iframe-container') as HTMLElement | null;
+    this._enterFullscreen(container);
+  }
+
+  /**
+   * Double-click/tap to toggle fullscreen. This only reaches us while the interaction
+   * lock is on — an interactive Windy iframe swallows the gesture itself.
+   */
+  private _handleContainerDblClick(e: Event) {
+    if (!this._fullscreenEnabled) return;
+    if ((e.target as HTMLElement)?.closest?.('.action-button')) return;
+    if (this._isFullscreen) {
+      this._exitFullscreen();
+      return;
+    }
+    this._enterFullscreen(e.currentTarget as HTMLElement | null);
+  }
+
   private _renderIframeWithWrapper(
     url: string,
     defaultHeight: number,
     title: string,
     showResetButton: boolean = false,
     respectStaticLock: boolean = true,
+    allowFullscreen: boolean = false,
   ) {
     const ratioPadding = this._getRatioPadding();
     const height = this._config.height;
+    const isFullscreen = allowFullscreen && this._isFullscreen;
 
     // The static/lock toggle is meant to stop the map from hijacking page scroll/pan
     // gestures. It has no equivalent problem in the forecast panel, which should always
@@ -464,32 +560,66 @@ export class WindyCard extends LitElement implements LovelaceCard {
         </button>`
       : '';
 
+    const fullscreenButton =
+      allowFullscreen && this._fullscreenEnabled
+        ? html`<button
+            class="action-button fullscreen-button"
+            @click=${this._toggleFullscreen}
+            title="${
+              this._isFullscreen
+                ? (localize(this.hass, 'component.windy-card.card.exit_fullscreen') ?? 'Exit full screen')
+                : (localize(this.hass, 'component.windy-card.card.fullscreen') ?? 'Full screen')
+            }"
+          >
+            <ha-icon icon="${this._isFullscreen ? 'mdi:fullscreen-exit' : 'mdi:fullscreen'}"></ha-icon>
+          </button>`
+        : '';
+
+    const dblClickHandler = allowFullscreen ? this._handleContainerDblClick : undefined;
+
+    // Fullscreen overrides the inline geometry rather than swapping templates, so Lit keeps
+    // the same iframe element alive and the map does not reload when entering/leaving.
+    const fullscreenGeometry = 'position: fixed; inset: 0; width: auto; height: auto; padding: 0;';
+
     if (ratioPadding && !height) {
       return html`
         <div
-          class="iframe-container ratio-wrapper"
-          style="padding-bottom: ${ratioPadding}; position: relative; width: 100%; height: 0;"
+          class="iframe-container ratio-wrapper ${isFullscreen ? 'fullscreen' : ''}"
+          style="${
+            isFullscreen
+              ? fullscreenGeometry
+              : `padding-bottom: ${ratioPadding}; position: relative; width: 100%; height: 0;`
+          }"
+          @dblclick=${dblClickHandler}
         >
           <iframe
             style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; ${pointerEvents}"
             src="${url}"
             title="${title}"
           ></iframe>
-          <div class="action-buttons">${resetButton} ${toggleStaticButton}</div>
+          <div class="action-buttons">${resetButton} ${toggleStaticButton} ${fullscreenButton}</div>
         </div>
       `;
     }
 
     return html`
-      <div class="iframe-container" style="position: relative; width: 100%;">
+      <div
+        class="iframe-container ${isFullscreen ? 'fullscreen' : ''}"
+        style="${isFullscreen ? fullscreenGeometry : 'position: relative; width: 100%;'}"
+        @dblclick=${dblClickHandler}
+      >
         <iframe
           width="100%"
           height="${height ?? defaultHeight}"
           src="${url}"
           title="${title}"
-          style="border: none; display: block; ${pointerEvents}"
+          style="${
+            isFullscreen
+              ? `position: absolute; inset: 0; width: 100%; height: 100%; border: none; display: block; ${pointerEvents}`
+              : `border: none; display: block; ${pointerEvents}`
+          }"
         ></iframe>
-        <div class="action-buttons">${resetButton} ${toggleStaticButton}</div>
+        <div class="action-buttons">${resetButton} ${toggleStaticButton} ${fullscreenButton}</div>
       </div>
     `;
   }
@@ -571,7 +701,7 @@ export class WindyCard extends LitElement implements LovelaceCard {
   }
 
   private _renderMap() {
-    return this._renderIframeWithWrapper(this._mapUrl, 450, 'Windy Map', true);
+    return this._renderIframeWithWrapper(this._mapUrl, 450, 'Windy Map', true, true, true);
   }
 
   private _computeForecastUrl(): string {

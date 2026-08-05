@@ -49,6 +49,14 @@ describe('WindyCardEditor', () => {
       expect(flatSchema.some((s) => s.name === 'zoom')).toBe(false);
       expect(flatSchema.some((s) => s.name === 'overlay')).toBe(false);
       expect(flatSchema.some((s) => s.name === 'show_marker')).toBe(false);
+      expect(flatSchema.some((s) => s.name === 'hide_fullscreen_button')).toBe(false);
+    });
+
+    it('offers the hide_fullscreen_button toggle for map modes', () => {
+      const editor = makeEditor({ default_mode: 'map' });
+      const schema = (editor as unknown as { _getSchema: () => HaFormSchema[] })._getSchema();
+      const flatSchema = flattenSchema(schema);
+      expect(flatSchema.some((s) => s.name === 'hide_fullscreen_button')).toBe(true);
     });
 
     it('shows no_padding when in a locked mode (map_only)', () => {

@@ -89,6 +89,7 @@ export interface WindyCardConfig extends LovelaceCardConfig {
   show_spot?: boolean;
   show_pressure?: boolean;
   hide_message?: boolean;
+  hide_fullscreen_button?: boolean;
   no_padding?: boolean;
   static_map?: boolean;
   autoplay?: boolean;

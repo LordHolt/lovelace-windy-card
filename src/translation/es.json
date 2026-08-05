@@ -7,7 +7,9 @@
     "forecast": "Pronóstico",
     "reset_map": "Restablecer mapa",
     "enable_interaction": "Habilitar interacción",
-    "disable_interaction": "Deshabilitar interacción"
+    "disable_interaction": "Deshabilitar interacción",
+    "fullscreen": "Pantalla completa",
+    "exit_fullscreen": "Salir de pantalla completa"
   },
   "editor": {
     "sections": {
@@ -42,6 +44,7 @@
       "show_spot": "Incluir pronóstico local",
       "show_pressure": "Líneas de presión",
       "hide_message": "Ocultar texto promocional",
+      "hide_fullscreen_button": "Ocultar botón de pantalla completa",
       "no_padding": "Quitar relleno y borde (ancho completo)",
       "static_map": "Mapa estático (deshabilitar interacciones)",
       "autoplay": "Reproducción automática del mapa"

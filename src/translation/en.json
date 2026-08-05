@@ -7,7 +7,9 @@
     "forecast": "Forecast",
     "reset_map": "Reset Map",
     "enable_interaction": "Enable interaction",
-    "disable_interaction": "Disable interaction"
+    "disable_interaction": "Disable interaction",
+    "fullscreen": "Full screen",
+    "exit_fullscreen": "Exit full screen"
   },
   "editor": {
     "sections": {
@@ -42,6 +44,7 @@
       "show_spot": "Include spot forecast",
       "show_pressure": "Pressure isolines",
       "hide_message": "Hide promotional text",
+      "hide_fullscreen_button": "Hide full screen button",
       "no_padding": "Remove padding and border (full width)",
       "static_map": "Static map (disable interactions)",
       "autoplay": "Autoplay map animation"
