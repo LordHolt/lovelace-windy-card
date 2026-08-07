@@ -42,6 +42,7 @@
       "metric_wind": "Wind",
       "show_marker": "Show marker",
       "show_spot": "Include spot forecast",
+      "allow_geolocation": "Allow Windy to use your precise location",
       "show_pressure": "Pressure isolines",
       "hide_message": "Hide promotional text",
       "hide_fullscreen_button": "Hide full screen button",

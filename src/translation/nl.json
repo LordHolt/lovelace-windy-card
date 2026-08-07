@@ -42,6 +42,7 @@
       "metric_wind": "Wind",
       "show_marker": "Markering weergeven",
       "show_spot": "Spotverwachting toevoegen",
+      "allow_geolocation": "Windy je precieze locatie laten gebruiken",
       "show_pressure": "Druk isobaren",
       "hide_message": "Promotietekst verbergen",
       "hide_fullscreen_button": "Knop volledig scherm verbergen",

@@ -42,6 +42,7 @@
       "metric_wind": "Wind",
       "show_marker": "Marker anzeigen",
       "show_spot": "Spot-Vorhersage einbeziehen",
+      "allow_geolocation": "Windy den genauen Standort erlauben",
       "show_pressure": "Isobaren anzeigen",
       "hide_message": "Werbung ausblenden",
       "hide_fullscreen_button": "Vollbild-Schaltfläche ausblenden",

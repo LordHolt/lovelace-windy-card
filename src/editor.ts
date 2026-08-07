@@ -583,6 +583,7 @@ export class WindyCardEditor extends LitElement implements LovelaceCardEditor {
                 { name: 'autoplay', selector: { boolean: {} } },
                 { name: 'show_marker', selector: { boolean: {} } },
                 { name: 'show_spot', selector: { boolean: {} } },
+                { name: 'allow_geolocation', selector: { boolean: {} } },
                 ...(!isRadarOrSatellite ? [{ name: 'show_pressure', selector: { boolean: {} } } as HaFormSchema] : []),
                 { name: 'hide_message', selector: { boolean: {} } },
                 { name: 'hide_fullscreen_button', selector: { boolean: {} } },

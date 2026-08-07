@@ -42,6 +42,7 @@
       "metric_wind": "Viento",
       "show_marker": "Mostrar marcador",
       "show_spot": "Incluir pronóstico local",
+      "allow_geolocation": "Permitir que Windy use tu ubicación precisa",
       "show_pressure": "Líneas de presión",
       "hide_message": "Ocultar texto promocional",
       "hide_fullscreen_button": "Ocultar botón de pantalla completa",

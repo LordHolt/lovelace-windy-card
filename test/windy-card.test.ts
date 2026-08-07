@@ -1,4 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
+import { render } from 'lit';
 import '../src/windy-card.js';
 import { WindyCard } from '../src/windy-card.js';
 import type { WindyCardConfig } from '../src/types.js';
@@ -477,6 +478,38 @@ describe('WindyCard', () => {
       // We can't easily check the private render logic here without full DOM,
       // but we can check if the config is correctly stored
       expect((card as unknown as { _config: WindyCardConfig })._config.no_padding).toBe(true);
+    });
+  });
+
+  describe('allow_geolocation', () => {
+    // Sniffing the template's `values` array cannot see attributes — render and read the DOM.
+    function renderIframe(card: WindyCard, mode: 'map' | 'forecast' = 'map'): HTMLIFrameElement | null {
+      const method = mode === 'map' ? '_renderMap' : '_renderForecast';
+      const template = (card as unknown as Record<string, () => unknown>)[method]();
+      const container = document.createElement('div');
+      render(template, container);
+      return container.querySelector('iframe');
+    }
+
+    it('delegates geolocation on the ratio-wrapper branch', () => {
+      const card = makeCard({ aspect_ratio: '16:9', allow_geolocation: true });
+      expect(renderIframe(card)?.getAttribute('allow')).toBe('geolocation');
+    });
+
+    it('delegates geolocation on the fixed-height branch', () => {
+      const card = makeCard({ aspect_ratio: '', height: 400, allow_geolocation: true });
+      expect(renderIframe(card)?.getAttribute('allow')).toBe('geolocation');
+    });
+
+    it('delegates geolocation on the forecast iframe', () => {
+      const card = makeCard({ allow_geolocation: true });
+      expect(renderIframe(card, 'forecast')?.getAttribute('allow')).toBe('geolocation');
+    });
+
+    it('omits the allow attribute when the option is off', () => {
+      expect(renderIframe(makeCard({ aspect_ratio: '16:9' }))?.hasAttribute('allow')).toBe(false);
+      expect(renderIframe(makeCard({ aspect_ratio: '', height: 400 }))?.hasAttribute('allow')).toBe(false);
+      expect(renderIframe(makeCard({ allow_geolocation: false }))?.hasAttribute('allow')).toBe(false);
     });
   });
 

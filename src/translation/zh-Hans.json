@@ -42,6 +42,7 @@
       "metric_wind": "风速",
       "show_marker": "显示标记",
       "show_spot": "包含单点预报",
+      "allow_geolocation": "允许 Windy 使用您的精确位置",
       "show_pressure": "等压线",
       "hide_message": "隐藏推广文本",
       "hide_fullscreen_button": "隐藏全屏按钮",

@@ -130,6 +130,14 @@ The card is fully configurable through the Lovelace UI editor. Options are organ
 | `show_pressure`          | boolean | `false` | Overlay pressure isolines (not available for radar/satellite)                       |
 | `hide_message`           | boolean | `false` | Hide the Windy promotional message                                                  |
 | `hide_fullscreen_button` | boolean | `false` | Remove the full screen button from the map toolbar (also disables double-tap)       |
+| `allow_geolocation`      | boolean | `false` | Let Windy use your precise location instead of guessing it from your IP (see below) |
+
+#### Precise location (`allow_geolocation`)
+
+Grants the Windy iframe the browser's geolocation permission, so the **radar** overlay's location dot lands on your actual position instead of the IP-based guess (see [Known Limitations](#known-limitations)). Two caveats:
+
+- **HTTPS only.** Geolocation requires a secure context. It has no effect if you reach Home Assistant over plain `http://<local-ip>:8123` — use Nabu Casa, a reverse proxy with TLS, or local TLS. (`http://localhost:8123` counts as secure.)
+- **The browser will prompt.** You get a one-time location request on the Home Assistant origin. That is why the option is off by default.
 
 ### Full Screen
 
@@ -280,7 +288,9 @@ This card uses the free [Windy Embed Widget](https://embed.windy.com/config/map)
 - **Radar Units Support:** The radar overlay natively displays intensity in `dBZ` (unlike the full app's `mm/h` toggle). This is the intended behavior of the Windy Embed API. Unit settings configured on this card (`metric_rain`, etc.) serve as your preferred defaults for the spot forecast and other compatible overlays.
 - **Satellite Spectrum:** Although Windy provides Blue, Visible, and Infrared satellite options, the embed iframe automatically strips or ignores external URL overrides (like `satelliteMode=IRBT`) and forces the default view. Toggling these maps must be done manually using the controls within the iframe.
 - **Superpose Radar:** The "Superpose Radar" toggle available on the full Windy.com satellite view is intentionally excluded from the free embed widget. It is unfortunately not possible to inject this button or combined overlay into the Home Assistant card.
-- **"Your location" dot:** Windy draws a pulsating location dot in two cases that the card cannot suppress: the **radar** overlay always geolocates the viewer, and the **spot forecast** marks its point with a dot (it is inseparable from the forecast — Windy needs those coordinates to render the meteogram at all). Because the map runs in a cross-origin `<iframe>`, the card can neither hide nor reposition these dots, and Windy exposes no parameter to disable them. The dot is often _inaccurate_ too: on `embed.windy.com` directly the browser asks to share your GPS location for a precise position, but browsers don't show that prompt to a cross-origin iframe unless the embedding page delegates the permission — and Home Assistant provides no way to do that — so Windy falls back to your (less precise) IP-based location.
+- **"Your location" dot:** Windy draws a pulsating location dot that the card cannot switch off. It has two sources — the **radar** overlay always geolocates the viewer, and the **spot forecast** marks the point it is reporting for. Neither can be suppressed: Windy exposes no parameter for it, the map runs in a cross-origin `<iframe>` so the card cannot reach in and hide it, and the forecast dot is inseparable from the meteogram (Windy needs those coordinates to draw it at all).
+
+  The radar dot is usually in the _wrong place_ as well — often tens of kilometres off, at your ISP's hub. Browsers do not show the location prompt to a cross-origin iframe unless the embedding page delegates the permission, so Windy falls back to locating you by IP address. [`allow_geolocation: true`](#precise-location-allow_geolocation) delegates it and the dot moves to your real position. The dot cannot be removed, but it can at least be correct.
 
 </details>
 

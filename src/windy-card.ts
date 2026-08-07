@@ -1,4 +1,4 @@
-import { LitElement, html, unsafeCSS } from 'lit';
+import { LitElement, html, nothing, unsafeCSS } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { HomeAssistant, LovelaceCard, LovelaceCardEditor, WindyCardConfig } from './types.js';
 import { localize } from './localize.js';
@@ -534,6 +534,10 @@ export class WindyCard extends LitElement implements LovelaceCard {
     // stay scrollable, so only the map iframe should ever get pointer-events disabled.
     const pointerEvents = respectStaticLock && this._isStatic ? 'pointer-events: none;' : '';
 
+    // Lets Windy locate the viewer by GPS instead of by IP, which is what puts the radar
+    // overlay's location dot in the right place.
+    const allow = this._config.allow_geolocation ? 'geolocation' : nothing;
+
     const resetButton = showResetButton
       ? html`<button
           class="action-button reset-button"
@@ -596,6 +600,7 @@ export class WindyCard extends LitElement implements LovelaceCard {
             style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; ${pointerEvents}"
             src="${url}"
             title="${title}"
+            allow="${allow}"
           ></iframe>
           <div class="action-buttons">${resetButton} ${toggleStaticButton} ${fullscreenButton}</div>
         </div>
@@ -613,6 +618,7 @@ export class WindyCard extends LitElement implements LovelaceCard {
           height="${height ?? defaultHeight}"
           src="${url}"
           title="${title}"
+          allow="${allow}"
           style="${
             isFullscreen
               ? `position: absolute; inset: 0; width: 100%; height: 100%; border: none; display: block; ${pointerEvents}`

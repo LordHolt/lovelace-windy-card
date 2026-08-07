@@ -86,6 +86,22 @@ describe('WindyCardEditor', () => {
       const flatSchema = flattenSchema(schema);
       expect(flatSchema.some((s) => s.name === 'forecast_product')).toBe(false);
     });
+
+    it('offers the allow_geolocation toggle for map modes', () => {
+      for (const default_mode of ['map', 'forecast', 'map_only'] as const) {
+        const editor = makeEditor({ default_mode });
+        const schema = (editor as unknown as { _getSchema: () => HaFormSchema[] })._getSchema();
+        const flatSchema = flattenSchema(schema);
+        expect(flatSchema.some((s) => s.name === 'allow_geolocation')).toBe(true);
+      }
+    });
+
+    it('hides the allow_geolocation toggle in forecast_only mode', () => {
+      const editor = makeEditor({ default_mode: 'forecast_only' });
+      const schema = (editor as unknown as { _getSchema: () => HaFormSchema[] })._getSchema();
+      const flatSchema = flattenSchema(schema);
+      expect(flatSchema.some((s) => s.name === 'allow_geolocation')).toBe(false);
+    });
   });
 });
 

@@ -42,6 +42,7 @@
       "metric_wind": "Vent",
       "show_marker": "Afficher le marqueur",
       "show_spot": "Inclure les prévisions locales",
+      "allow_geolocation": "Autoriser Windy à utiliser votre position précise",
       "show_pressure": "Isobares",
       "hide_message": "Masquer le texte promotionnel",
       "hide_fullscreen_button": "Masquer le bouton plein écran",
