@@ -8,3 +8,22 @@ views:
         overlay: wind
         zoom: 7
         aspect_ratio: '16:9'
+
+  - title: Geolocation (#37)
+    cards:
+      # Baseline: no permission delegated, so the dot lands at the IP-derived position.
+      - type: custom:windy-card
+        title: Radar — allow_geolocation OFF
+        overlay: radar
+        zoom: 9
+        aspect_ratio: '16:9'
+        static_map: true
+
+      # Delegated: the browser prompts once, then the dot should sit on the real position.
+      - type: custom:windy-card
+        title: Radar — allow_geolocation ON
+        overlay: radar
+        zoom: 9
+        aspect_ratio: '16:9'
+        static_map: true
+        allow_geolocation: true
